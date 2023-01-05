@@ -17,10 +17,10 @@ public class AI : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
     }
 
-   
+
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             var randoTarget = Random.Range(0, _wayPoints.Length);
             _agent.destination = _wayPoints[randoTarget].GetComponent<Transform>().position;
