@@ -2,14 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 public class AI1 : MonoBehaviour
 {
+    private enum AIState
+    {
+        Walking,
+        Jumping,
+        Attack,
+        Death
+    }
+
     [SerializeField]
     private List<Transform> _points;
     private NavMeshAgent _agent;
     private int _currentPoint = 0;
     private bool _inReverse;
+    [SerializeField]
+    private AIState _currentState;
+    private bool _attacking = false;
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -25,7 +37,37 @@ public class AI1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CalculateAIMOvement();
+        //if e key is pressed 
+        //currentState = AI Behavior
+        //stop the AI
+
+        if(Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            _currentState = AIState.Jumping;
+            _agent.isStopped = true;
+        }
+
+        switch(_currentState)
+        {
+            case AIState.Walking:
+                Debug.Log("Walking...");
+                CalculateAIMOvement();
+                break;
+            case AIState.Jumping:
+                Debug.Log("Jumping...");
+                break;
+            case AIState.Attack:
+                Debug.Log("Attack...");
+                if(_attacking == false)
+                {
+                    StartCoroutine(AttackRoutine());
+                    _attacking = true;
+                }
+                break;
+            case AIState.Death:
+                Debug.Log("Death...");
+                break;
+        }
     }
 
     void CalculateAIMOvement()
@@ -41,6 +83,9 @@ public class AI1 : MonoBehaviour
                 Forward();
             }
             _agent.SetDestination(_points[_currentPoint].position);
+
+            //perform attack
+            _currentState = AIState.Attack;
         }
     }
     void Forward()
@@ -71,5 +116,14 @@ public class AI1 : MonoBehaviour
                 _currentPoint--;
             }
         }
+    }
+
+    IEnumerator AttackRoutine()
+    {
+        _agent.isStopped = true;
+        yield return new WaitForSeconds(3.0f);
+        _agent.isStopped = false;
+        _currentState = AIState.Walking;
+        _attacking = false;
     }
 }
