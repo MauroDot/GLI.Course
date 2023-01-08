@@ -14,6 +14,10 @@ public class AI1 : MonoBehaviour
         Death
     }
 
+    //store all wayopints
+    //select a random waypoint
+    //travel to the that random waypoint
+    //start is called before the first frame
     [SerializeField]
     private List<Transform> _points;
     private NavMeshAgent _agent;
